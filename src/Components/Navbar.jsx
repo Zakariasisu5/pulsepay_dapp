@@ -61,18 +61,30 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       {menuOpen && (
-        <div className="navbar-mobile-menu">
-          <div className="flex flex-col items-center justify-center h-full w-full space-y-8">
-            <Link to="/" className={`navbar-link ${isActive("/")}`} onClick={() => setMenuOpen(false)}>Home</Link>
-            <Link to="/plans" className={`navbar-link ${isActive("/plans")}`} onClick={() => setMenuOpen(false)}>Explore Plans</Link>
-            <Link to="/dashboard" className={`navbar-link ${isActive("/dashboard")}`} onClick={() => setMenuOpen(false)}>Dashboard</Link>
-            <div className="flex flex-col items-center gap-4 mt-6 w-full">
+        <div
+          className="fixed inset-0 z-50 bg-[#18182fdd] backdrop-blur-sm flex flex-col"
+          style={{ transition: "opacity 0.3s" }}
+        >
+          <button
+            className="absolute top-5 right-5 text-cyan-400"
+            onClick={() => setMenuOpen(false)}
+            aria-label="Close menu"
+          >
+            <svg className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+          <div className="flex flex-col items-center justify-center h-full w-full space-y-10 pt-20">
+            <Link to="/" className={`navbar-link text-xl ${isActive("/")}`} onClick={() => setMenuOpen(false)}>Home</Link>
+            <Link to="/plans" className={`navbar-link text-xl ${isActive("/plans")}`} onClick={() => setMenuOpen(false)}>Explore Plans</Link>
+            <Link to="/dashboard" className={`navbar-link text-xl ${isActive("/dashboard")}`} onClick={() => setMenuOpen(false)}>Dashboard</Link>
+            <div className="flex flex-col items-center gap-6 mt-10 w-full">
               {user ? (
-                <button onClick={() => { logout(); setMenuOpen(false); }} className="navbar-wallet" style={{ fontSize: "1.15rem" }}>Logout</button>
+                <button onClick={() => { logout(); setMenuOpen(false); }} className="navbar-wallet text-lg">Logout</button>
               ) : (
                 <>
-                  <Link to="/signin" className="navbar-wallet border-purple-500 text-purple-400" style={{ fontSize: "1.15rem" }} onClick={() => setMenuOpen(false)}>Sign In</Link>
-                  <Link to="/signup" className="navbar-wallet" style={{ fontSize: "1.15rem" }} onClick={() => setMenuOpen(false)}>Get Started</Link>
+                  <Link to="/signin" className="navbar-wallet border-purple-500 text-purple-400 text-lg" onClick={() => setMenuOpen(false)}>Sign In</Link>
+                  <Link to="/signup" className="navbar-wallet text-lg" onClick={() => setMenuOpen(false)}>Get Started</Link>
                 </>
               )}
             </div>

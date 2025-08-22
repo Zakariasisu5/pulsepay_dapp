@@ -243,42 +243,44 @@ export default function Dashboard() {
         <div className="blob blob3"></div>
       </div>
       <div
-        className="dashboard-container fade-in-up w-full max-w-3xl mx-auto p-4 sm:p-8"
+        className="dashboard-container fade-in-up w-full max-w-3xl mx-auto p-2 sm:p-4 md:p-8"
         style={{
           borderRadius: '1.5rem',
           background: 'linear-gradient(135deg, #232344 80%, #2e2e4d 100%)',
           boxShadow: '0 12px 40px 0 rgba(77,234,255,0.13)',
-          margin: '3rem 0',
+          margin: '2rem 0',
         }}
       >
         {/* Profile Section */}
-        <div className="profile-card flex flex-col sm:flex-row items-center gap-6 mb-10">
-          <div className="dashboard-avatar bg-pulse-cyan text-[#232344] font-extrabold text-3xl flex items-center justify-center rounded-full w-20 h-20 mb-3 sm:mb-0 shadow-lg border-4 border-[#4deaff33]">
+        <div className="profile-card flex flex-col md:flex-row items-center gap-4 md:gap-8 mb-8 w-full">
+          <div className="dashboard-avatar bg-pulse-cyan text-[#232344] font-extrabold text-2xl md:text-3xl flex items-center justify-center rounded-full w-16 h-16 md:w-20 md:h-20 mb-3 md:mb-0 shadow-lg border-4 border-[#4deaff33]">
             {user.displayName ? user.displayName[0].toUpperCase() : (user.email[0]?.toUpperCase() || "U")}
           </div>
-          <div className="text-center sm:text-left">
-            <h2 className="text-2xl font-bold mb-2 flex items-center gap-2 justify-center sm:justify-start">👤 User Profile</h2>
-            <p>
-              <span className="font-semibold text-[#4deaff]">Username:</span>{" "}
-              <span className="user-username">{user.displayName || "N/A"}</span>
-            </p>
-            <p>
-              <span className="font-semibold text-[#4deaff]">Email:</span>{" "}
-              <span className="user-email">{user.email}</span>
-            </p>
+          <div className="text-center md:text-left w-full">
+            <h2 className="text-lg sm:text-xl md:text-2xl font-bold mb-2 flex items-center gap-2 justify-center md:justify-start">👤 User Profile</h2>
+            <div className="flex flex-col sm:flex-row sm:justify-between gap-2 sm:gap-4">
+              <p>
+                <span className="font-semibold text-[#4deaff]">Username:</span>{" "}
+                <span className="user-username">{user.displayName || "N/A"}</span>
+              </p>
+              <p>
+                <span className="font-semibold text-[#4deaff]">Email:</span>{" "}
+                <span className="user-email">{user.email}</span>
+              </p>
+            </div>
           </div>
         </div>
 
         {/* Connect Wallet Button */}
-        <div className="flex justify-end mb-8">
+        <div className="flex justify-end mb-6">
           {walletAddress ? (
-            <div className="flex items-center gap-3 bg-[#232344] px-4 py-2 rounded-full text-[#4deaff] font-semibold shadow-lg border border-[#4deaff] text-sm sm:text-base">
+            <div className="flex items-center gap-2 bg-[#232344] px-3 py-2 rounded-full text-[#4deaff] font-semibold shadow-lg border border-[#4deaff] text-xs md:text-base">
               Connected: {walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}
             </div>
           ) : (
             <button
-              className="btn-ghost bg-gradient-to-r from-pulse-cyan to-pulse-purple text-white font-bold py-2 px-6 shadow-lg hover:from-pulse-purple hover:to-pulse-cyan transition-all duration-300 text-sm sm:text-base tracking-wide border-none rounded-lg"
-              style={{ minWidth: 120 }}
+              className="btn-ghost bg-gradient-to-r from-pulse-cyan to-pulse-purple text-white font-bold py-2 px-4 md:px-6 shadow-lg hover:from-pulse-purple hover:to-pulse-cyan transition-all duration-300 text-xs md:text-base tracking-wide border-none rounded-lg"
+              style={{ minWidth: 100 }}
               onClick={handleConnectWallet}
             >
               Connect Wallet
@@ -287,27 +289,27 @@ export default function Dashboard() {
         </div>
 
         {/* Subscription Section */}
-        <div className="subscription-card mb-10">
-          <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">📦 Subscription</h2>
-          <div className="subscription-grid grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+        <div className="subscription-card mb-8">
+          <h2 className="text-xl md:text-2xl font-bold mb-3 flex items-center gap-2">📦 Subscription</h2>
+          <div className="subscription-grid grid grid-cols-1 sm:grid-cols-2 gap-2 md:gap-4 mb-3">
             <p><span className="font-semibold text-[#a78bfa]">Plan:</span> {subscription.plan}</p>
             <p><span className="font-semibold text-[#a78bfa]">Balance:</span> {subscription.balance}</p>
             <p><span className="font-semibold text-[#a78bfa]">Status:</span> <span className="status-pill">{subscription.status}</span></p>
             <p><span className="font-semibold text-[#a78bfa]">Renewal:</span> {subscription.renewal}</p>
           </div>
-          <div className="dashboard-actions flex flex-col sm:flex-row flex-wrap gap-3">
-            <button onClick={handleUpgradePlan} className="bg-yellow-500 hover:bg-yellow-600 text-[#232344] font-bold py-2 px-4 rounded-full transition w-full sm:w-auto shadow">
+          <div className="dashboard-actions flex flex-col md:flex-row flex-wrap gap-2 md:gap-3">
+            <button onClick={handleUpgradePlan} className="bg-yellow-500 hover:bg-yellow-600 text-[#232344] font-bold py-2 px-4 rounded-full transition w-full md:w-auto shadow">
               Upgrade Plan
             </button>
-            <button className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full transition w-full sm:w-auto shadow" onClick={handleAddFunds}>
+            <button className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full transition w-full md:w-auto shadow" onClick={handleAddFunds}>
               Add Funds
             </button>
-            <button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full transition w-full sm:w-auto shadow" onClick={handleViewPlans}>
+            <button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full transition w-full md:w-auto shadow" onClick={handleViewPlans}>
               View Plans
             </button>
             <button
               onClick={logout}
-              className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full transition w-full sm:w-auto shadow"
+              className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full transition w-full md:w-auto shadow"
             >
               Logout
             </button>
@@ -534,13 +536,13 @@ export default function Dashboard() {
         )}
 
         {/* Recent Activity Section */}
-        <div className="activity-card mt-12">
-          <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">🕒 Recent Activity</h2>
-          <ul className="activity-list space-y-3">
+        <div className="activity-card mt-8">
+          <h2 className="text-xl md:text-2xl font-bold mb-3 flex items-center gap-2">🕒 Recent Activity</h2>
+          <ul className="activity-list space-y-2 md:space-y-3">
             {recentActivity.map((item, idx) => (
-              <li key={idx} className="flex flex-col sm:flex-row items-center justify-between bg-[#232344] px-4 py-3 rounded-xl shadow mb-2 sm:mb-0 border border-[#4deaff11]">
-                <div className="flex items-center gap-3 mb-2 sm:mb-0">
-                  <span className="activity-type text-xl">
+              <li key={idx} className="flex flex-col md:flex-row items-center justify-between bg-[#232344] px-3 py-2 rounded-xl shadow mb-2 md:mb-0 border border-[#4deaff11]">
+                <div className="flex items-center gap-2 md:gap-3 mb-2 md:mb-0">
+                  <span className="activity-type text-lg md:text-xl">
                     {item.type === "Payment" && "💸"}
                     {item.type === "Deposit" && "💰"}
                     {item.type === "Upgrade" && "⬆️"}
@@ -555,30 +557,30 @@ export default function Dashboard() {
         </div>
 
         {/* Transaction History Section */}
-        <div className="transaction-history-card mt-12">
-          <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">🔗 Transaction History</h2>
+        <div className="transaction-history-card mt-8">
+          <h2 className="text-xl md:text-2xl font-bold mb-3 flex items-center gap-2">🔗 Transaction History</h2>
           <div className="overflow-x-auto">
-            <table className="min-w-full text-sm text-left">
+            <table className="min-w-full text-xs md:text-sm text-left">
               <thead>
                 <tr>
-                  <th className="py-2 px-3 text-[#4deaff] font-semibold">Txn Hash</th>
-                  <th className="py-2 px-3 text-[#4deaff] font-semibold">Type</th>
-                  <th className="py-2 px-3 text-[#4deaff] font-semibold">Amount</th>
-                  <th className="py-2 px-3 text-[#4deaff] font-semibold">Date</th>
-                  <th className="py-2 px-3 text-[#4deaff] font-semibold">Status</th>
+                  <th className="py-2 px-2 md:px-3 text-[#4deaff] font-semibold">Txn Hash</th>
+                  <th className="py-2 px-2 md:px-3 text-[#4deaff] font-semibold">Type</th>
+                  <th className="py-2 px-2 md:px-3 text-[#4deaff] font-semibold">Amount</th>
+                  <th className="py-2 px-2 md:px-3 text-[#4deaff] font-semibold">Date</th>
+                  <th className="py-2 px-2 md:px-3 text-[#4deaff] font-semibold">Status</th>
                 </tr>
               </thead>
               <tbody>
                 {transactionHistory.map((tx, idx) => (
                   <tr key={idx} className="border-b border-[#4deaff11] hover:bg-[#232344cc] transition">
-                    <td className="py-2 px-3 font-mono text-xs text-[#a78bfa]">
+                    <td className="py-2 px-2 md:px-3 font-mono text-xs text-[#a78bfa]">
                       <span title={tx.hash}>{tx.hash.slice(0, 6)}...{tx.hash.slice(-4)}</span>
                     </td>
-                    <td className="py-2 px-3">{tx.type}</td>
-                    <td className={`py-2 px-3 font-bold ${tx.amount.startsWith('-') ? 'text-red-400' : 'text-green-400'}`}>{tx.amount}</td>
-                    <td className="py-2 px-3">{tx.date}</td>
-                    <td className="py-2 px-3">
-                      <span className="inline-block px-3 py-1 rounded-full bg-[#4deaff22] text-[#4deaff] font-semibold text-xs">{tx.status}</span>
+                    <td className="py-2 px-2 md:px-3">{tx.type}</td>
+                    <td className={`py-2 px-2 md:px-3 font-bold ${tx.amount.startsWith('-') ? 'text-red-400' : 'text-green-400'}`}>{tx.amount}</td>
+                    <td className="py-2 px-2 md:px-3">{tx.date}</td>
+                    <td className="py-2 px-2 md:px-3">
+                      <span className="inline-block px-2 md:px-3 py-1 rounded-full bg-[#4deaff22] text-[#4deaff] font-semibold text-xs">{tx.status}</span>
                     </td>
                   </tr>
                 ))}
