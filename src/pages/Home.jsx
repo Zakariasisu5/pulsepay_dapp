@@ -61,6 +61,11 @@ function SubscriptionPopup({ open, plan, onClose, onConfirm }) {
   );
 }
 
+// Utility to get wallet address from localStorage
+function getWalletAddress() {
+  return typeof window !== 'undefined' ? localStorage.getItem('pulsepay_wallet') : null;
+}
+
 export default function Home() {
   const [showModal, setShowModal] = useState(false);
   const [customPlans, setCustomPlans] = useState([]);
@@ -106,6 +111,20 @@ export default function Home() {
   };
 
   const handleConfirm = () => {
+    const walletAddress = getWalletAddress();
+    if (!walletAddress) {
+      alert("Please connect your wallet before subscribing to a plan.");
+      setPopupOpen(false);
+      return;
+    }
+    // Save subscription to localStorage for Dashboard
+    const sub = {
+      plan: selectedPlan.title || selectedPlan.name,
+      balance: "0.00 USDC",
+      status: "Active",
+      renewal: new Date(Date.now() + 30*24*60*60*1000).toISOString().slice(0,10), // +30 days
+    };
+    localStorage.setItem('pulsepay_subscription', JSON.stringify(sub));
     setPopupOpen(false);
     alert(`Subscribed to ${selectedPlan.title || selectedPlan.name}!`);
   };

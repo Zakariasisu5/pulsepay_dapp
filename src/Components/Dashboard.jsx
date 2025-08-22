@@ -11,40 +11,41 @@ export default function Dashboard() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
-  // Mock user data (replace with Firestore or backend data later)
-  const subscription = {
-    plan: "Pro Plan",
-    balance: "120 USDC",
+  // Subscription state
+  const [subscription, setSubscription] = useState({
+    plan: "Free Plan",
+    balance: "0.00 USDC",
     status: "Active",
-    renewal: "2025-09-01",
-  };
+    renewal: "-",
+  });
 
-  // Mock recent activity
-  const recentActivity = [
-    { type: "Payment", desc: "Subscription renewal", amount: "-10 USDC", date: "2025-08-01" },
-    { type: "Deposit", desc: "Added funds", amount: "+50 USDC", date: "2025-07-28" },
-    { type: "Upgrade", desc: "Upgraded to Pro Plan", amount: "-10 USDC", date: "2025-07-01" },
-  ];
-
-  // Mock transaction history
-  const transactionHistory = [
-    { hash: "0x8a1b...e3f2", type: "Deposit", amount: "+50 USDC", date: "2025-07-28", status: "Success" },
-    { hash: "0x7b2c...d1a9", type: "Payment", amount: "-10 USDC", date: "2025-08-01", status: "Success" },
-    { hash: "0x5c3d...b7e4", type: "Upgrade", amount: "-10 USDC", date: "2025-07-01", status: "Success" },
-    { hash: "0x4d4e...c8f5", type: "Deposit", amount: "+30 USDC", date: "2025-06-15", status: "Success" },
-    { hash: "0x3e5f...a9b6", type: "Payment", amount: "-10 USDC", date: "2025-06-01", status: "Success" },
-  ];
+  // Activity & Transaction state
+  const [recentActivity, setRecentActivity] = useState([]);
+  const [transactionHistory, setTransactionHistory] = useState([]);
 
   // Wallet connection state
   const [walletAddress, setWalletAddress] = useState("");
   const [provider, setProvider] = useState(null);
 
-  // On mount, check localStorage for wallet address
+  // Add Funds popup state
+  const [showAddFunds, setShowAddFunds] = useState(false);
+  const [fundAmount, setFundAmount] = useState("");
+
+  // Upgrade Plan popup state
+  const [showUpgrade, setShowUpgrade] = useState(false);
+  const [selectedUpgrade, setSelectedUpgrade] = useState("");
+
+  // Subscribe popup state
+  const [showSubscribe, setShowSubscribe] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState(null);
+
+  // On mount, check localStorage for wallet address and subscription
   useEffect(() => {
     const savedWallet = localStorage.getItem('pulsepay_wallet');
-    if (savedWallet) {
-      setWalletAddress(savedWallet);
-    }
+    if (savedWallet) setWalletAddress(savedWallet);
+
+    const savedSub = localStorage.getItem('pulsepay_subscription');
+    if (savedSub) setSubscription(JSON.parse(savedSub));
   }, []);
 
   // Web3Modal config
@@ -85,38 +86,112 @@ export default function Dashboard() {
       const signer = ethersProvider.getSigner();
       const address = await signer.getAddress();
       setWalletAddress(address);
-      // Store wallet address in localStorage for access in Plans page
       localStorage.setItem('pulsepay_wallet', address);
     } catch (err) {
       console.error("Wallet connection failed", err);
     }
   }
 
-  // Add Funds popup state
-  const [showAddFunds, setShowAddFunds] = useState(false);
-  const [fundAmount, setFundAmount] = useState("");
-
-  // Upgrade Plan popup state
-  const [showUpgrade, setShowUpgrade] = useState(false);
-  const [selectedUpgrade, setSelectedUpgrade] = useState("");
-
-  // Handle Upgrade Plan
-  const handleUpgradePlan = () => setShowUpgrade(true);
-  const handleUpgradeConfirm = () => {
-    setShowUpgrade(false);
-    alert(`Upgraded to ${selectedUpgrade || "Premium"}!`);
+  // Handle Add Funds
+  const handleAddFunds = () => {
+    if (!walletAddress) {
+      alert("Please connect your wallet before adding funds.");
+      return;
+    }
+    setShowAddFunds(true);
   };
 
-  // Handle Add Funds
-  const handleAddFunds = () => setShowAddFunds(true);
   const handleAddFundsConfirm = () => {
+    if (!fundAmount || isNaN(fundAmount) || Number(fundAmount) <= 0) return;
+    // Update balance
+    const newBalance = (parseFloat(subscription.balance) + parseFloat(fundAmount)).toFixed(2) + " USDC";
+    setSubscription(prev => {
+      const updated = { ...prev, balance: newBalance };
+      localStorage.setItem('pulsepay_subscription', JSON.stringify(updated));
+      return updated;
+    });
+    // Add to activity & history
+    const now = new Date().toISOString().slice(0, 10);
+    setRecentActivity(prev => [
+      { type: "Deposit", desc: "Added funds", amount: `+${fundAmount} USDC`, date: now },
+      ...prev,
+    ]);
+    setTransactionHistory(prev => [
+      { hash: Math.random().toString(16).slice(2,10), type: "Deposit", amount: `+${fundAmount} USDC`, date: now, status: "Success" },
+      ...prev,
+    ]);
     setShowAddFunds(false);
-    alert(`Added ${fundAmount} USDC to your balance!`);
     setFundAmount("");
+  };
+
+  // Handle Upgrade Plan
+  const handleUpgradePlan = () => {
+    if (subscription.plan === "Free Plan") {
+      alert("Please subscribe to a paid plan before upgrading.");
+      return;
+    }
+    setShowUpgrade(true);
+  };
+
+  const handleUpgradeConfirm = () => {
+    if (!selectedUpgrade) return;
+    setSubscription(prev => {
+      const updated = { ...prev, plan: selectedUpgrade };
+      localStorage.setItem('pulsepay_subscription', JSON.stringify(updated));
+      return updated;
+    });
+    // Add to activity & history
+    const now = new Date().toISOString().slice(0, 10);
+    setRecentActivity(prev => [
+      { type: "Upgrade", desc: `Upgraded to ${selectedUpgrade}`, amount: "-10 USDC", date: now },
+      ...prev,
+    ]);
+    setTransactionHistory(prev => [
+      { hash: Math.random().toString(16).slice(2,10), type: "Upgrade", amount: "-10 USDC", date: now, status: "Success" },
+      ...prev,
+    ]);
+    setShowUpgrade(false);
+    setSelectedUpgrade("");
+  };
+
+  // Handle Subscribe (from Plans page)
+  const handleSubscribe = (plan) => {
+    if (!walletAddress) {
+      alert("Please connect your wallet before subscribing to a plan.");
+      return;
+    }
+    const newSub = {
+      plan: plan.name,
+      balance: "0.00 USDC",
+      status: "Active",
+      renewal: new Date(Date.now() + 30*24*60*60*1000).toISOString().slice(0,10), // +30 days
+    };
+    setSubscription(newSub);
+    localStorage.setItem('pulsepay_subscription', JSON.stringify(newSub));
+    // Add to activity & history
+    const now = new Date().toISOString().slice(0, 10);
+    setRecentActivity(prev => [
+      { type: "Payment", desc: `Subscribed to ${plan.name}`, amount: "-10 USDC", date: now },
+      ...prev,
+    ]);
+    setTransactionHistory(prev => [
+      { hash: Math.random().toString(16).slice(2,10), type: "Payment", amount: "-10 USDC", date: now, status: "Success" },
+      ...prev,
+    ]);
+    setShowSubscribe(false);
+    setSelectedPlan(null);
   };
 
   // Handle View Plans
   const handleViewPlans = () => navigate("/plans");
+
+  // Example: Listen for subscription from Plans page (simulate with localStorage or context)
+  useEffect(() => {
+    // You can use a global event, context, or localStorage to sync subscription from /plans
+    // For demo, check localStorage for a new subscription
+    const sub = localStorage.getItem('pulsepay_subscription');
+    if (sub) setSubscription(JSON.parse(sub));
+  }, []);
 
   if (!user) {
     return (
@@ -241,52 +316,74 @@ export default function Dashboard() {
 
         {/* Upgrade Plan Popup */}
         {showUpgrade && (
-          <div style={{
-            position: "fixed",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: "100vw",
-            height: "100vh",
-            background: "rgba(24,24,47,0.75)",
-            zIndex: 100,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center"
-          }}>
-            <div style={{
-              background: "#232344",
-              borderRadius: "1.2rem",
-              padding: "2rem 2.5rem",
-              color: "#4deaff",
-              fontWeight: 700,
-              fontSize: "1.1rem",
-              minWidth: 260,
-              maxWidth: 340,
-              width: "90vw",
-              boxShadow: "0 8px 32px 0 rgba(77,234,255,0.18)"
-            }}>
-              <h3 style={{marginBottom: "1rem"}}>Upgrade Your Plan</h3>
+          <div
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              width: "100vw",
+              height: "100vh",
+              background: "rgba(24,24,47,0.75)",
+              zIndex: 100,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <div
+              style={{
+                background: "#232344",
+                borderRadius: "1.2rem",
+                padding: "2rem 2.5rem",
+                color: "#4deaff",
+                fontWeight: 700,
+                fontSize: "1.1rem",
+                minWidth: 260,
+                maxWidth: 340,
+                width: "90vw",
+                boxShadow: "0 8px 32px 0 rgba(77,234,255,0.18)",
+              }}
+            >
+              <h3 style={{ marginBottom: "1rem" }}>Upgrade Your Plan</h3>
               <select
                 value={selectedUpgrade}
                 onChange={e => setSelectedUpgrade(e.target.value)}
-                style={{padding: "0.5rem", borderRadius: "0.5rem", marginBottom: "1.2rem", width: "100%"}}
+                style={{
+                  padding: "0.5rem",
+                  borderRadius: "0.5rem",
+                  marginBottom: "1.2rem",
+                  width: "100%",
+                }}
               >
                 <option value="">Select a plan</option>
                 <option value="Premium">Premium</option>
                 <option value="Pro">Pro</option>
                 <option value="Enterprise">Enterprise</option>
               </select>
-              <div style={{display: "flex", gap: "1rem", justifyContent: "center"}}>
+              <div style={{ display: "flex", gap: "1rem", justifyContent: "center" }}>
                 <button
-                  style={{background: "#4deaff", color: "#18182f", borderRadius: "9999px", padding: "0.5rem 1.5rem", fontWeight: 700, border: "none"}}
+                  style={{
+                    background: "#4deaff",
+                    color: "#18182f",
+                    borderRadius: "9999px",
+                    padding: "0.5rem 1.5rem",
+                    fontWeight: 700,
+                    border: "none",
+                  }}
                   onClick={handleUpgradeConfirm}
                   disabled={!selectedUpgrade}
                 >
                   Confirm
                 </button>
                 <button
-                  style={{background: "none", color: "#a78bfa", borderRadius: "9999px", padding: "0.5rem 1.5rem", fontWeight: 700, border: "2px solid #a78bfa"}}
+                  style={{
+                    background: "none",
+                    color: "#a78bfa",
+                    borderRadius: "9999px",
+                    padding: "0.5rem 1.5rem",
+                    fontWeight: 700,
+                    border: "2px solid #a78bfa",
+                  }}
                   onClick={() => setShowUpgrade(false)}
                 >
                   Cancel
@@ -298,50 +395,136 @@ export default function Dashboard() {
 
         {/* Add Funds Popup */}
         {showAddFunds && (
-          <div style={{
-            position: "fixed",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: "100vw",
-            height: "100vh",
-            background: "rgba(24,24,47,0.75)",
-            zIndex: 100,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center"
-          }}>
-            <div style={{
-              background: "#232344",
-              borderRadius: "1.2rem",
-              padding: "2rem 2.5rem",
-              color: "#4deaff",
-              fontWeight: 700,
-              fontSize: "1.1rem",
-              minWidth: 260,
-              maxWidth: 340,
-              width: "90vw",
-              boxShadow: "0 8px 32px 0 rgba(77,234,255,0.18)"
-            }}>
-              <h3 style={{marginBottom: "1rem"}}>Add Funds</h3>
+          <div
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              width: "100vw",
+              height: "100vh",
+              background: "rgba(24,24,47,0.75)",
+              zIndex: 100,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <div
+              style={{
+                background: "#232344",
+                borderRadius: "1.2rem",
+                padding: "2rem 2.5rem",
+                color: "#4deaff",
+                fontWeight: 700,
+                fontSize: "1.1rem",
+                minWidth: 260,
+                maxWidth: 340,
+                width: "90vw",
+                boxShadow: "0 8px 32px 0 rgba(77,234,255,0.18)",
+              }}
+            >
+              <h3 style={{ marginBottom: "1rem" }}>Add Funds</h3>
               <input
                 type="number"
                 placeholder="Amount (USDC)"
                 value={fundAmount}
                 onChange={e => setFundAmount(e.target.value)}
-                style={{padding: "0.5rem", borderRadius: "0.5rem", marginBottom: "1.2rem", width: "100%"}}
+                style={{
+                  padding: "0.5rem",
+                  borderRadius: "0.5rem",
+                  marginBottom: "1.2rem",
+                  width: "100%",
+                }}
               />
-              <div style={{display: "flex", gap: "1rem", justifyContent: "center"}}>
+              <div style={{ display: "flex", gap: "1rem", justifyContent: "center" }}>
                 <button
-                  style={{background: "#4deaff", color: "#18182f", borderRadius: "9999px", padding: "0.5rem 1.5rem", fontWeight: 700, border: "none"}}
+                  style={{
+                    background: "#4deaff",
+                    color: "#18182f",
+                    borderRadius: "9999px",
+                    padding: "0.5rem 1.5rem",
+                    fontWeight: 700,
+                    border: "none",
+                  }}
                   onClick={handleAddFundsConfirm}
                   disabled={!fundAmount}
                 >
                   Confirm
                 </button>
                 <button
-                  style={{background: "none", color: "#a78bfa", borderRadius: "9999px", padding: "0.5rem 1.5rem", fontWeight: 700, border: "2px solid #a78bfa"}}
+                  style={{
+                    background: "none",
+                    color: "#a78bfa",
+                    borderRadius: "9999px",
+                    padding: "0.5rem 1.5rem",
+                    fontWeight: 700,
+                    border: "2px solid #a78bfa",
+                  }}
                   onClick={() => setShowAddFunds(false)}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Subscribe Popup (optional, if you want to trigger from dashboard) */}
+        {showSubscribe && selectedPlan && (
+          <div
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              width: "100vw",
+              height: "100vh",
+              background: "rgba(24,24,47,0.75)",
+              zIndex: 100,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <div
+              style={{
+                background: "#232344",
+                borderRadius: "1.2rem",
+                padding: "2rem 2.5rem",
+                color: "#4deaff",
+                fontWeight: 700,
+                fontSize: "1.1rem",
+                minWidth: 260,
+                maxWidth: 340,
+                width: "90vw",
+                boxShadow: "0 8px 32px 0 rgba(77,234,255,0.18)",
+              }}
+            >
+              <h3 style={{ marginBottom: "1rem" }}>Subscribe to {selectedPlan.name}</h3>
+              <p style={{ marginBottom: "1.2rem" }}>{selectedPlan.price} - {selectedPlan.category}</p>
+              <div style={{ display: "flex", gap: "1rem", justifyContent: "center" }}>
+                <button
+                  style={{
+                    background: "#4deaff",
+                    color: "#18182f",
+                    borderRadius: "9999px",
+                    padding: "0.5rem 1.5rem",
+                    fontWeight: 700,
+                    border: "none",
+                  }}
+                  onClick={() => handleSubscribe(selectedPlan)}
+                >
+                  Confirm
+                </button>
+                <button
+                  style={{
+                    background: "none",
+                    color: "#a78bfa",
+                    borderRadius: "9999px",
+                    padding: "0.5rem 1.5rem",
+                    fontWeight: 700,
+                    border: "2px solid #a78bfa",
+                  }}
+                  onClick={() => setShowSubscribe(false)}
                 >
                   Cancel
                 </button>
