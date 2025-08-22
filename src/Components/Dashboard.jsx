@@ -1,5 +1,5 @@
 import { useAuth } from "../utils/AuthContext";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import Web3Modal from "web3modal";
 import WalletConnectProvider from "@walletconnect/web3-provider";
@@ -38,6 +38,14 @@ export default function Dashboard() {
   // Wallet connection state
   const [walletAddress, setWalletAddress] = useState("");
   const [provider, setProvider] = useState(null);
+
+  // On mount, check localStorage for wallet address
+  useEffect(() => {
+    const savedWallet = localStorage.getItem('pulsepay_wallet');
+    if (savedWallet) {
+      setWalletAddress(savedWallet);
+    }
+  }, []);
 
   // Web3Modal config
   const web3Modal = typeof window !== "undefined" && new Web3Modal({

@@ -110,6 +110,46 @@ export default function Home() {
     alert(`Subscribed to ${selectedPlan.title || selectedPlan.name}!`);
   };
 
+  // Replace the featured plans array with themed images
+  const featuredPlans = [
+    {
+      title: 'Premium Streaming Bundle',
+      desc: 'Enjoy unlimited access to top movies, music, and live events. All-in-one entertainment, gasless and secure.',
+      price: '0.05 ETH',
+      img: 'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=800&q=80', // Streaming
+    },
+    {
+      title: 'Pro Productivity Suite',
+      desc: 'Unlock advanced tools for teams: cloud docs, AI assistants, and seamless collaboration. Boost your workflow today.',
+      price: '0.03 ETH',
+      img: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=800&q=80', // Dev Pro / AI
+    },
+    {
+      title: 'Web3 Learning Hub',
+      desc: 'Access premium courses, expert webinars, and certification tracks. Learn blockchain, DeFi, and more—at your pace.',
+      price: '0.02 ETH',
+      img: 'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=800&q=80', // Web3 / Dapp
+    },
+    {
+      title: 'Gaming VIP',
+      desc: 'Exclusive access to top blockchain games, tournaments, and in-game rewards.',
+      price: '0.03 ETH',
+      img: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=800&q=80', // Gaming
+    },
+    {
+      title: 'Community Gold',
+      desc: 'Join premium communities, unlock special events, and connect with top creators.',
+      price: '0.04 ETH',
+      img: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80', // Community
+    },
+    {
+      title: 'AI Assistant',
+      desc: 'Get access to advanced AI tools for productivity, creativity, and automation.',
+      price: '0.07 ETH',
+      img: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=800&q=80', // AI
+    },
+  ];
+
   return (
     <div className="home-hero min-h-screen flex flex-col relative overflow-hidden">
       {/* Animated Background Blobs */}
@@ -195,28 +235,9 @@ export default function Home() {
           <h2 className="home-featured-title gradient-text text-4xl md:text-5xl font-extrabold mb-2 animate-fade-in">Featured Plans</h2>
           <p className="home-featured-subtitle text-lg md:text-xl mb-10 animate-fade-in delay-100">Discover top subscription options across various categories</p>
           <div className="home-featured-grid gap-10">
-            {[
-              {
-                title: 'Premium Streaming Bundle',
-                desc: 'Enjoy unlimited access to top movies, music, and live events. All-in-one entertainment, gasless and secure.',
-                price: '0.05 ETH',
-                img: 'https://picsum.photos/seed/pulse1/800/400',
-              },
-              {
-                title: 'Pro Productivity Suite',
-                desc: 'Unlock advanced tools for teams: cloud docs, AI assistants, and seamless collaboration. Boost your workflow today.',
-                price: '0.03 ETH',
-                img: 'https://picsum.photos/seed/pulse2/800/400',
-              },
-              {
-                title: 'Web3 Learning Hub',
-                desc: 'Access premium courses, expert webinars, and certification tracks. Learn blockchain, DeFi, and more—at your pace.',
-                price: '0.02 ETH',
-                img: 'https://picsum.photos/seed/pulse3/800/400',
-              },
-            ].map((plan, i) => (
+            {featuredPlans.map((plan, i) => (
               <div key={i} className="card home-featured-card relative overflow-hidden group shadow-2xl border border-pulse-cyan/30 hover:border-pulse-purple/50 transition-all duration-300">
-                <img className="plan-card-image w-full transition-transform duration-500 group-hover:scale-105" src={plan.img} alt="" />
+                <img className="plan-card-image w-full transition-transform duration-500 group-hover:scale-105" src={plan.img} alt={plan.title} />
                 {/* Overlay gradient */}
                 <div className="absolute inset-0 bg-gradient-to-t from-[#232344ee] via-transparent to-transparent pointer-events-none z-10"></div>
                 {/* Badge */}

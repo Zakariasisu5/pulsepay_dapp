@@ -114,6 +114,20 @@ export default function Plans() {
     setVisibleCount((prev) => prev + PLANS_PER_PAGE);
   };
 
+  // Add a mapping for plan images
+  const planImages = {
+    "Streaming+": "https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=800&q=80", // streaming
+    "Dev Pro": "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=800&q=80", // dev
+    "Gaming VIP": "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=800&q=80", // gaming
+    "Community Gold": "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80", // community
+    "Music Pro": "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=800&q=80", // music
+    "Design Suite": "https://images.unsplash.com/photo-1503676382389-4809596d5290?auto=format&fit=crop&w=800&q=80", // design
+    "Analytics Pro": "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=800&q=80", // analytics
+    "NFT Insights": "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=800&q=80", // nft/web3
+    "Crypto News+": "https://images.unsplash.com/photo-1508385082359-f48b1c1b5b8b?auto=format&fit=crop&w=800&q=80", // crypto
+    "AI Assistant": "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=800&q=80", // ai
+  };
+
   return (
     <section
       className="plans-section fade-in-up"
@@ -164,7 +178,12 @@ export default function Plans() {
         <div className="plans-grid" style={{ maxHeight: '68vh', overflowY: 'auto', paddingRight: '0.5rem', scrollbarWidth: 'thin' }}>
           {visiblePlans.map((p, i) => (
             <div key={i} className="plans-card" style={{ transition: 'box-shadow 0.3s, transform 0.3s', boxShadow: '0 8px 32px 0 rgba(77,234,255,0.10), 0 1.5px 8px 0 rgba(178,89,255,0.10)', border: '1.5px solid rgba(168,139,250,0.13)', borderRadius: '1.1rem', background: 'linear-gradient(135deg, #232344 80%, #2e2e4d 100%)' }}>
-              <img className="plan-card-image w-full" src={`https://picsum.photos/seed/plan${i}/800/400`} alt="" style={{ borderTopLeftRadius: '1.1rem', borderTopRightRadius: '1.1rem', height: '160px', objectFit: 'cover' }} />
+              <img
+                className="plan-card-image w-full"
+                src={planImages[p.name] || `https://picsum.photos/seed/plan${i}/800/400`}
+                alt={p.name}
+                style={{ borderTopLeftRadius: '1.1rem', borderTopRightRadius: '1.1rem', height: '160px', objectFit: 'cover' }}
+              />
               <div className="p-6">
                 <h3 className="plans-card-title flex items-center gap-2" style={{ fontWeight: 700, color: '#4deaff', fontSize: '1.18rem' }}>
                   {p.name}
