@@ -1,30 +1,54 @@
 import { useState } from "react";
 
-// Simple PulsePay FAQ for demo purposes
+// Expanded PulsePay & Web3 FAQ
 const pulsepayAnswers = [
   {
     keywords: ["what", "pulsepay"],
-    answer: "PulsePay is a modern Web3 subscription platform that lets you create, manage, and subscribe to decentralized services with gasless transactions and secure blockchain payments."
+    answer: "PulsePay is a modern Web3 subscription platform for decentralized services, offering gasless transactions and secure blockchain payments."
   },
   {
     keywords: ["how", "subscribe"],
-    answer: "To subscribe on PulsePay, connect your wallet, browse available plans, and click 'Subscribe' on your chosen plan. Your subscription will be managed securely on-chain."
+    answer: "To subscribe, connect your wallet, browse plans, and click 'Subscribe' on your chosen plan. Your subscription is managed securely on-chain."
   },
   {
     keywords: ["wallet", "connect"],
-    answer: "PulsePay supports MetaMask, WalletConnect, Coinbase Wallet, Sonic Wallet, and other EIP-1193 compatible wallets. Connect your wallet from the Dashboard page."
+    answer: "PulsePay supports MetaMask, WalletConnect, Coinbase Wallet, OKX Wallet, Sui Wallet, Sonic Wallet, and other EIP-1193 compatible wallets. Connect your wallet from the Dashboard or Navbar."
+  },
+  {
+    keywords: ["okx", "wallet"],
+    answer: "OKX Wallet is supported! Choose it from the wallet modal when connecting your wallet."
+  },
+  {
+    keywords: ["sui", "wallet"],
+    answer: "Sui Wallet is supported! Select it from the wallet modal when connecting your wallet."
+  },
+  {
+    keywords: ["sonic", "wallet"],
+    answer: "Sonic Wallet is supported! Pick it from the wallet modal when connecting your wallet."
   },
   {
     keywords: ["gasless", "transaction"],
     answer: "PulsePay enables gasless transactions for supported plans, so you can subscribe without paying network fees directly."
   },
   {
+    keywords: ["security", "safe"],
+    answer: "PulsePay uses blockchain technology for secure payments and subscriptions. Always keep your wallet recovery phrase safe."
+  },
+  {
+    keywords: ["web3"],
+    answer: "Web3 refers to the decentralized internet powered by blockchain. PulsePay is a Web3 platform for subscriptions and payments."
+  },
+  {
+    keywords: ["troubleshoot", "error", "problem"],
+    answer: "If you encounter issues, try refreshing the page, reconnecting your wallet, or checking your internet connection. For further help, contact support@pulsepay.app."
+  },
+  {
     keywords: ["support", "help", "contact"],
-    answer: "For support, please use the chatbot or contact our team at support@pulsepay.app."
+    answer: "For support, use this chatbot or email support@pulsepay.app."
   },
   {
     keywords: ["feature", "plan"],
-    answer: "PulsePay offers features like decentralized subscriptions, secure payments, and easy plan management for both creators and users."
+    answer: "PulsePay offers decentralized subscriptions, secure payments, easy plan management, and support for multiple wallets."
   }
 ];
 
@@ -36,9 +60,12 @@ function getPulsePayAnswer(input) {
   }
   // Default fallback
   if (lower.includes("pulsepay")) {
-    return "PulsePay is a Web3 subscription platform for decentralized, gasless, and secure blockchain payments.";
+    return "PulsePay is a Web3 subscription platform for decentralized, gasless, and secure blockchain payments. Ask me anything about PulsePay or Web3!";
   }
-  return "I'm here to help with anything about PulsePay! Please ask your question.";
+  if (lower.includes("web3")) {
+    return "Web3 is the decentralized internet powered by blockchain. PulsePay lets you use Web3 subscriptions and payments easily.";
+  }
+  return "I'm here to help with anything about PulsePay or Web3! Please ask your question.";
 }
 
 export default function Chatbot() {

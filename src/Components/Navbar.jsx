@@ -1,11 +1,22 @@
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../utils/AuthContext";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { connectWallet } from "../utils/wallet"; // <-- import the shared wallet logic
 
 export default function Navbar() {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const loc = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [walletAddress, setWalletAddress] = useState("");
+
+  useEffect(() => {
+    const addr = localStorage.getItem("pulsepay_wallet");
+    if (addr) setWalletAddress(addr);
+  }, []);
+
+  async function handleConnectWallet() {
+    await connectWallet(setWalletAddress); // uses shared logic, shows wallet modal
+  }
 
   const isActive = (to) =>
     loc.pathname === to ? "text-cyan-400 font-bold" : "";
@@ -50,7 +61,13 @@ export default function Navbar() {
       {/* Desktop Auth/Wallet */}
       <div className="hidden md:flex items-center gap-3">
         {user ? (
-          <button onClick={logout} className="navbar-wallet">Logout</button>
+          walletAddress ? (
+            <div className="navbar-wallet bg-[#232344] px-3 py-2 rounded-full text-[#4deaff] font-semibold shadow border border-[#4deaff] text-xs md:text-base">
+              Connected: {walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}
+            </div>
+          ) : (
+            <button onClick={handleConnectWallet} className="navbar-wallet">Connect Wallet</button>
+          )
         ) : (
           <>
             <Link to="/signin" className="navbar-wallet border-purple-500 text-purple-400">Sign In</Link>
@@ -80,7 +97,13 @@ export default function Navbar() {
             <Link to="/dashboard" className={`navbar-link text-xl ${isActive("/dashboard")}`} onClick={() => setMenuOpen(false)}>Dashboard</Link>
             <div className="flex flex-col items-center gap-6 mt-10 w-full">
               {user ? (
-                <button onClick={() => { logout(); setMenuOpen(false); }} className="navbar-wallet text-lg">Logout</button>
+                walletAddress ? (
+                  <div className="navbar-wallet bg-[#232344] px-3 py-2 rounded-full text-[#4deaff] font-semibold shadow border border-[#4deaff] text-lg">
+                    Connected: {walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}
+                  </div>
+                ) : (
+                  <button onClick={() => { handleConnectWallet(); setMenuOpen(false); }} className="navbar-wallet text-lg">Connect Wallet</button>
+                )
               ) : (
                 <>
                   <Link to="/signin" className="navbar-wallet border-purple-500 text-purple-400 text-lg" onClick={() => setMenuOpen(false)}>Sign In</Link>

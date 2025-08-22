@@ -7,6 +7,27 @@ import CoinbaseWalletSDK from '@coinbase/wallet-sdk';
 import { useNavigate } from "react-router-dom";
 import '../index.css';
 
+// Custom injected wallet configs for OKX, Sui, Sonic with icons and display name
+const customInjected = (name, check, icon) => ({
+  display: {
+    name,
+    description: `Connect with ${name} browser extension`,
+    icon: icon, // SVG or image URL
+  },
+  package: null,
+  connector: async () => {
+    if (check()) {
+      return window.ethereum;
+    }
+    throw new Error(`${name} extension not found`);
+  }
+});
+
+// Example SVG icons (replace with your own or use image URLs)
+const okxIcon = `<svg width="32" height="32" viewBox="0 0 32 32"><circle fill="#000" cx="16" cy="16" r="16"/><text x="16" y="21" text-anchor="middle" fill="#fff" font-size="14" font-family="Arial">OKX</text></svg>`;
+const suiIcon = `<svg width="32" height="32" viewBox="0 0 32 32"><circle fill="#00e1e1" cx="16" cy="16" r="16"/><text x="16" y="21" text-anchor="middle" fill="#fff" font-size="14" font-family="Arial">SUI</text></svg>`;
+const sonicIcon = `<svg width="32" height="32" viewBox="0 0 32 32"><circle fill="#6c47ff" cx="16" cy="16" r="16"/><text x="16" y="21" text-anchor="middle" fill="#fff" font-size="14" font-family="Arial">SONIC</text></svg>`;
+
 export default function Dashboard() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
@@ -48,7 +69,7 @@ export default function Dashboard() {
     if (savedSub) setSubscription(JSON.parse(savedSub));
   }, []);
 
-  // Web3Modal config
+  // Web3Modal config with extra wallets
   const web3Modal = typeof window !== "undefined" && new Web3Modal({
     cacheProvider: false,
     providerOptions: {
@@ -74,7 +95,22 @@ export default function Dashboard() {
           chainId: 1,
           darkMode: true
         }
-      }
+      },
+      okxwallet: customInjected(
+        "OKX Wallet",
+        () => window.okxwallet || (window.ethereum && window.ethereum.isOkxWallet),
+        okxIcon
+      ),
+      suiwallet: customInjected(
+        "Sui Wallet",
+        () => window.suiWallet || (window.ethereum && window.ethereum.isSuiWallet),
+        suiIcon
+      ),
+      sonicwallet: customInjected(
+        "Sonic Wallet",
+        () => window.sonicWallet || (window.ethereum && window.ethereum.isSonicWallet),
+        sonicIcon
+      ),
     }
   });
 
@@ -271,23 +307,34 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Connect Wallet Button */}
-        <div className="flex justify-end mb-6">
-          {walletAddress ? (
-            <div className="flex items-center gap-2 bg-[#232344] px-3 py-2 rounded-full text-[#4deaff] font-semibold shadow-lg border border-[#4deaff] text-xs md:text-base">
-              Connected: {walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}
-            </div>
-          ) : (
-            <button
-              className="btn-ghost bg-gradient-to-r from-pulse-cyan to-pulse-purple text-white font-bold py-2 px-4 md:px-6 shadow-lg hover:from-pulse-purple hover:to-pulse-cyan transition-all duration-300 text-xs md:text-base tracking-wide border-none rounded-lg"
-              style={{ minWidth: 100 }}
-              onClick={handleConnectWallet}
-            >
-              Connect Wallet
-            </button>
-          )}
-        </div>
-
+{/* Connect/Disconnect Wallet Button */}
+<div className="flex justify-end mb-6">
+  {walletAddress ? (
+    <div className="flex items-center gap-2">
+      <div className="bg-[#232344] px-3 py-2 rounded-full text-[#4deaff] font-semibold shadow-lg border border-[#4deaff] text-xs md:text-base">
+        Connected: {walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}
+      </div>
+      <button
+        className="ml-2 bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full transition text-xs md:text-base"
+        onClick={() => {
+          setWalletAddress("");
+          setProvider(null);
+          localStorage.removeItem('pulsepay_wallet');
+        }}
+      >
+        Disconnect Wallet
+      </button>
+    </div>
+  ) : (
+    <button
+      className="btn-ghost bg-gradient-to-r from-pulse-cyan to-pulse-purple text-white font-bold py-2 px-4 md:px-6 shadow-lg hover:from-pulse-purple hover:to-pulse-cyan transition-all duration-300 text-xs md:text-base tracking-wide border-none rounded-lg"
+      style={{ minWidth: 100 }}
+      onClick={handleConnectWallet}
+    >
+      Connect Wallet
+    </button>
+  )}
+</div>
         {/* Subscription Section */}
         <div className="subscription-card mb-8">
           <h2 className="text-xl md:text-2xl font-bold mb-3 flex items-center gap-2">📦 Subscription</h2>
