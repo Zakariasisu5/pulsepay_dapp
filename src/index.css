@@ -1560,6 +1560,9 @@ body, #root {
   left: 60vw; top: 70vh;
   animation-delay: 7s;
 }
+b{
+  font-size: 1.5rem;
+}
 
 @keyframes bgGradientMove {
   0% {
@@ -1568,7 +1571,7 @@ body, #root {
   }
   50% {
     background-position: 100% 50%;
-    background: linear-gradient(120deg, #232344 0%, #4deaff 100%);
+    background: linear-gradient(120deg, #232344 0%, #232350 100%);
   }
   100% {
     background-position: 0% 50%;

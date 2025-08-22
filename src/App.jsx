@@ -9,7 +9,6 @@ import Plans from "./pages/Plans";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import Chatbot from "./Components/Chatbot";
-import About from "./pages/About";
 
 export default function App() {
   return (
@@ -23,7 +22,6 @@ export default function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/plans" element={<Plans />} />
         </Routes>
-        <About/>
         <Chatbot/>
         <Footer/>
       </div>

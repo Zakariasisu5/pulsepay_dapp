@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import '../index.css';
 import CreatePlanPopup from '../Components/CreatePlanPopup';
+import About from "./About"
 
 // Subscription Popup for demo
 function SubscriptionPopup({ open, plan, onClose, onConfirm }) {
@@ -145,15 +146,14 @@ export default function Home() {
               style={{ boxShadow: '0 2px 8px 0 rgba(77,234,255,0.10)', borderRadius: '0.375rem' }}
             >
               <span className="relative z-10 flex items-center gap-2">
-                {/* Search icon */}
-                <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-gradient-to-tr from-pulse-cyan to-pulse-purple shadow">
-                  <svg width="14" height="14" viewBox="0 0 20 20" fill="none">
+                <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-gradient-to-tr from-pulse-cyan to-pulse-purple shadow">
+                  <svg width="25" height="25" viewBox="0 0 20 20" fill="none">
                     <circle cx="10" cy="10" r="9" fill="#232344" />
                     <path d="M13.5 13.5L17 17" stroke="#4deaff" strokeWidth="1.5" strokeLinecap="round"/>
                     <circle cx="9" cy="9" r="4" stroke="#4deaff" strokeWidth="1.5"/>
                   </svg>
                 </span>
-                Explore Plans
+                <b>Explore Plans</b>
               </span>
               <span className="absolute inset-0 bg-gradient-to-r from-pulse-cyan/30 via-pulse-purple/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-0"></span>
             </Link>
@@ -163,14 +163,13 @@ export default function Home() {
               style={{ boxShadow: '0 2px 8px 0 rgba(167,139,250,0.10)', borderRadius: '0.375rem' }}
             >
               <span className="relative z-10 flex items-center gap-2">
-                {/* Plus icon */}
-                <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-gradient-to-tr from-pulse-cyan to-pulse-purple shadow">
-                  <svg width="14" height="14" viewBox="0 0 20 20" fill="none">
+                <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-gradient-to-tr from-pulse-cyan to-pulse-purple shadow">
+                  <svg width="25" height="25" viewBox="0 0 20 20" fill="none">
                     <circle cx="10" cy="10" r="9" fill="#232344" />
                     <path d="M10 6v8M6 10h8" stroke="#4deaff" strokeWidth="1.5" strokeLinecap="round"/>
                   </svg>
                 </span>
-                Create Plan
+                <b>Create Plan</b>
               </span>
               <span className="absolute inset-0 bg-gradient-to-r from-pulse-purple/20 via-pulse-cyan/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-0"></span>
             </button>
@@ -272,6 +271,7 @@ export default function Home() {
           </div>
         </div>
       </section>
+      <About/>
       <SubscriptionPopup
         open={popupOpen}
         plan={selectedPlan}
