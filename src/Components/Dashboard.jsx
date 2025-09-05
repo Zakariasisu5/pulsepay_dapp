@@ -586,20 +586,24 @@ export default function Dashboard() {
         <div className="activity-card mt-8">
           <h2 className="text-xl md:text-2xl font-bold mb-3 flex items-center gap-2">🕒 Recent Activity</h2>
           <ul className="activity-list space-y-2 md:space-y-3">
-            {recentActivity.map((item, idx) => (
-              <li key={idx} className="flex flex-col md:flex-row items-center justify-between bg-[#232344] px-3 py-2 rounded-xl shadow mb-2 md:mb-0 border border-[#4deaff11]">
-                <div className="flex items-center gap-2 md:gap-3 mb-2 md:mb-0">
-                  <span className="activity-type text-lg md:text-xl">
-                    {item.type === "Payment" && "💸"}
-                    {item.type === "Deposit" && "💰"}
-                    {item.type === "Upgrade" && "⬆️"}
-                  </span>
-                  <span className="activity-desc">{item.desc}</span>
-                  <span className="activity-date text-xs text-gray-400 ml-2">{item.date}</span>
-                </div>
-                <span className={`activity-amount font-bold ${item.amount.startsWith("-") ? "text-red-400" : "text-green-400"}`}>{item.amount}</span>
-              </li>
-            ))}
+            {recentActivity.length === 0 ? (
+              <li className="text-gray-400 text-center py-4">No recent activity yet.</li>
+            ) : (
+              recentActivity.map((item, idx) => (
+                <li key={idx} className="flex flex-col md:flex-row items-center justify-between bg-[#232344] px-3 py-2 rounded-xl shadow mb-2 md:mb-0 border border-[#4deaff11]">
+                  <div className="flex items-center gap-2 md:gap-3 mb-2 md:mb-0">
+                    <span className="activity-type text-lg md:text-xl">
+                      {item.type === "Payment" && "💸"}
+                      {item.type === "Deposit" && "💰"}
+                      {item.type === "Upgrade" && "⬆️"}
+                    </span>
+                    <span className="activity-desc">{item.desc}</span>
+                    <span className="activity-date text-xs text-gray-400 ml-2">{item.date}</span>
+                  </div>
+                  <span className={`activity-amount font-bold ${item.amount.startsWith("-") ? "text-red-400" : "text-green-400"}`}>{item.amount}</span>
+                </li>
+              ))
+            )}
           </ul>
         </div>
 
@@ -618,19 +622,25 @@ export default function Dashboard() {
                 </tr>
               </thead>
               <tbody>
-                {transactionHistory.map((tx, idx) => (
-                  <tr key={idx} className="border-b border-[#4deaff11] hover:bg-[#232344cc] transition">
-                    <td className="py-2 px-2 md:px-3 font-mono text-xs text-[#a78bfa]">
-                      <span title={tx.hash}>{tx.hash.slice(0, 6)}...{tx.hash.slice(-4)}</span>
-                    </td>
-                    <td className="py-2 px-2 md:px-3">{tx.type}</td>
-                    <td className={`py-2 px-2 md:px-3 font-bold ${tx.amount.startsWith('-') ? 'text-red-400' : 'text-green-400'}`}>{tx.amount}</td>
-                    <td className="py-2 px-2 md:px-3">{tx.date}</td>
-                    <td className="py-2 px-2 md:px-3">
-                      <span className="inline-block px-2 md:px-3 py-1 rounded-full bg-[#4deaff22] text-[#4deaff] font-semibold text-xs">{tx.status}</span>
-                    </td>
+                {transactionHistory.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} className="text-gray-400 text-center py-4">No transactions yet.</td>
                   </tr>
-                ))}
+                ) : (
+                  transactionHistory.map((tx, idx) => (
+                    <tr key={idx} className="border-b border-[#4deaff11] hover:bg-[#232344cc] transition">
+                      <td className="py-2 px-2 md:px-3 font-mono text-xs text-[#a78bfa]">
+                        <span title={tx.hash}>{tx.hash.slice(0, 6)}...{tx.hash.slice(-4)}</span>
+                      </td>
+                      <td className="py-2 px-2 md:px-3">{tx.type}</td>
+                      <td className={`py-2 px-2 md:px-3 font-bold ${tx.amount.startsWith('-') ? 'text-red-400' : 'text-green-400'}`}>{tx.amount}</td>
+                      <td className="py-2 px-2 md:px-3">{tx.date}</td>
+                      <td className="py-2 px-2 md:px-3">
+                        <span className="inline-block px-2 md:px-3 py-1 rounded-full bg-[#4deaff22] text-[#4deaff] font-semibold text-xs">{tx.status}</span>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
