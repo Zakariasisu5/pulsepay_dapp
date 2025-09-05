@@ -8,18 +8,18 @@ import { NodeModulesPolyfillPlugin } from '@esbuild-plugins/node-modules-polyfil
 
 export default defineConfig({
   plugins: [react()],
-  optimizeDeps: {
-    esbuildOptions: {
-      define: {
-        global: 'globalThis',
-      },
-      plugins: [
-        NodeGlobalsPolyfillPlugin({
-          buffer: true,
-        }),
-        NodeModulesPolyfillPlugin()
-      ]
-    }
+  base: './',
+  optimizeDeps: {},
+  esbuildOptions: {
+    define: {
+      global: 'globalThis',
+    },
+    plugins: [
+      NodeGlobalsPolyfillPlugin({
+        buffer: true,
+      }),
+      NodeModulesPolyfillPlugin()
+    ]
   },
   resolve: {
     alias: {
